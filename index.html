@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#f5f2ea">
   <meta property="og:title" content="CAC-VLA: Context-Gated Action Conditioning for Vision-Language-Action Models">
   <meta property="og:description" content="Action-structured guidance inside the VLM, adaptively calibrated for continuous robot control.">
-  <meta property="og:image" content="assets/overview.png">
+  <meta property="og:image" content="assets/CAC-VLA-overview.png">
   <title>CAC-VLA</title>
-  <link rel="stylesheet" href="styles.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=2">
   <script src="script.js?v=2" defer></script>
 </head>
 <body>
@@ -90,12 +90,29 @@
       </div>
 
       <figure class="paper-figure reveal">
-        <img src="assets/overview.png" alt="CAC-VLA pipeline, expert-aware attention mask, and context-gate module">
+        <img src="assets/CAC-VLA-overview.png" alt="CAC-VLA pipeline with OAT latent-action alignment and context-gated action expert conditioning">
         <figcaption>
-          CAC-VLA adds latent query prediction and context-gated conditioning around
-          the continuous action expert.
+          CAC-VLA predicts OAT-aligned latent actions inside the VLM and injects them
+          into the continuous action expert through context-gated conditioning.
         </figcaption>
       </figure>
+
+      <div class="mechanism-grid">
+        <figure class="mechanism-figure reveal">
+          <img src="assets/attention_mask.png" alt="Expert-aware attention mask for image, prompt, state, query, and expert tokens">
+          <figcaption>
+            <strong>Expert-aware mask.</strong> Expert tokens cannot directly attend to
+            latent query tokens, preventing an unstructured shortcut.
+          </figcaption>
+        </figure>
+        <figure class="mechanism-figure reveal">
+          <img src="assets/context-gate.png" alt="Context gate computed from action hidden states and cross-attention output">
+          <figcaption>
+            <strong>Context gate.</strong> The current expert state and retrieved
+            latent-action update jointly determine the injection strength.
+          </figcaption>
+        </figure>
+      </div>
 
       <div class="method-grid">
         <article class="method-card reveal">
@@ -149,7 +166,7 @@
           </div>
         </div>
         <figure class="gate-figure reveal">
-          <img src="assets/gate.png" alt="Average context-gate value across ten flow steps for four LIBERO suites">
+          <img src="assets/gate-progress.png" alt="Average context-gate value across ten flow steps for four LIBERO suites">
           <figcaption>Gate values averaged over layers, episodes, and hidden channels.</figcaption>
         </figure>
       </div>
@@ -169,8 +186,9 @@
         <article class="result-card dark reveal">
           <p>LIBERO</p>
           <strong>98.3%</strong>
-          <span>Average success rate</span>
+          <span>Average success rate, ranked #2</span>
           <dl>
+            <div><dt>Spatial</dt><dd>98.4%</dd></div>
             <div><dt>Object</dt><dd>99.8%</dd></div>
             <div><dt>Goal</dt><dd>99.6%</dd></div>
             <div><dt>Long</dt><dd>95.4%</dd></div>
@@ -196,6 +214,201 @@
             <div><dt>Best horizon</dt><dd>H<sub>l</sub> = 20</dd></div>
           </dl>
         </article>
+      </div>
+
+      <div class="benchmark-grid">
+        <article class="benchmark-panel reveal">
+          <div class="panel-heading">
+            <div>
+              <span>Standard benchmark</span>
+              <h3>LIBERO average</h3>
+            </div>
+            <small>Success rate (%)</small>
+          </div>
+          <div class="bar-list">
+            <div class="bar-row">
+              <span>ACoT-VLA</span>
+              <div class="bar-track"><i style="--score: 98.5%"></i></div>
+              <strong>98.5</strong>
+            </div>
+            <div class="bar-row highlight">
+              <span>CAC-VLA</span>
+              <div class="bar-track"><i style="--score: 98.3%"></i></div>
+              <strong>98.3</strong>
+            </div>
+            <div class="bar-row">
+              <span>VLA-Adapter</span>
+              <div class="bar-track"><i style="--score: 97.3%"></i></div>
+              <strong>97.3</strong>
+            </div>
+            <div class="bar-row">
+              <span>&pi;0.5</span>
+              <div class="bar-track"><i style="--score: 96.9%"></i></div>
+              <strong>96.9</strong>
+            </div>
+          </div>
+          <p class="panel-note">CAC-VLA ranks second overall and achieves the best Object and Goal suite scores.</p>
+        </article>
+
+        <article class="benchmark-panel reveal">
+          <div class="panel-heading">
+            <div>
+              <span>Distribution shifts</span>
+              <h3>LIBERO-Plus SFT</h3>
+            </div>
+            <small>Success rate (%)</small>
+          </div>
+          <div class="bar-list">
+            <div class="bar-row highlight">
+              <span>CAC-VLA</span>
+              <div class="bar-track"><i style="--score: 89.5%"></i></div>
+              <strong>89.5</strong>
+            </div>
+            <div class="bar-row">
+              <span>ACoT-VLA</span>
+              <div class="bar-track"><i style="--score: 88%"></i></div>
+              <strong>88.0</strong>
+            </div>
+            <div class="bar-row">
+              <span>&pi;0.5</span>
+              <div class="bar-track"><i style="--score: 85.7%"></i></div>
+              <strong>85.7</strong>
+            </div>
+          </div>
+          <p class="panel-note">The strongest average result under supervised fine-tuning across seven shifts.</p>
+        </article>
+
+        <article class="benchmark-panel reveal">
+          <div class="panel-heading">
+            <div>
+              <span>Direct transfer</span>
+              <h3>LIBERO-Plus zero-shot</h3>
+            </div>
+            <small>Success rate (%)</small>
+          </div>
+          <div class="bar-list">
+            <div class="bar-row highlight">
+              <span>CAC-VLA</span>
+              <div class="bar-track"><i style="--score: 83.8%"></i></div>
+              <strong>83.8</strong>
+            </div>
+            <div class="bar-row">
+              <span>&pi;0.5</span>
+              <div class="bar-track"><i style="--score: 81.5%"></i></div>
+              <strong>81.5</strong>
+            </div>
+            <div class="bar-row">
+              <span>OpenVLA-OFT</span>
+              <div class="bar-track"><i style="--score: 69.6%"></i></div>
+              <strong>69.6</strong>
+            </div>
+          </div>
+          <p class="panel-note">Trained on LIBERO and evaluated directly on LIBERO-Plus without shift-specific fine-tuning.</p>
+        </article>
+      </div>
+
+      <div class="simulation-detail-grid">
+        <article class="data-panel reveal">
+          <div class="panel-heading">
+            <div>
+              <span>Suite breakdown</span>
+              <h3>LIBERO comparison</h3>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table class="result-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Spatial</th>
+                  <th>Object</th>
+                  <th>Goal</th>
+                  <th>Long</th>
+                  <th>Avg.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>&pi;0.5</th>
+                  <td>98.8</td>
+                  <td>98.2</td>
+                  <td>98.0</td>
+                  <td>92.4</td>
+                  <td>96.9</td>
+                </tr>
+                <tr>
+                  <th>ACoT-VLA</th>
+                  <td>98.6</td>
+                  <td>99.0</td>
+                  <td>99.4</td>
+                  <td><strong>97.0</strong></td>
+                  <td><strong>98.5</strong></td>
+                </tr>
+                <tr class="highlight-row">
+                  <th>CAC-VLA</th>
+                  <td>98.4</td>
+                  <td><strong>99.8</strong></td>
+                  <td><strong>99.6</strong></td>
+                  <td>95.4</td>
+                  <td>98.3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="data-panel reveal">
+          <div class="panel-heading">
+            <div>
+              <span>Shift breakdown</span>
+              <h3>CAC-VLA on LIBERO-Plus</h3>
+            </div>
+            <small>Supervised fine-tuning</small>
+          </div>
+          <div class="shift-grid">
+            <div><span>Camera</span><strong>91.2</strong><i style="--score: 91.2%"></i></div>
+            <div><span>Robot</span><strong>78.4</strong><i style="--score: 78.4%"></i></div>
+            <div><span>Language</span><strong>83.3</strong><i style="--score: 83.3%"></i></div>
+            <div><span>Lighting</span><strong>97.5</strong><i style="--score: 97.5%"></i></div>
+            <div><span>Background</span><strong>97.1</strong><i style="--score: 97.1%"></i></div>
+            <div><span>Noise</span><strong>95.4</strong><i style="--score: 95.4%"></i></div>
+            <div><span>Layout</span><strong>87.8</strong><i style="--score: 87.8%"></i></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="ablation-section reveal">
+        <div class="panel-heading">
+          <div>
+            <span>Design validation</span>
+            <h3>Ablation studies</h3>
+          </div>
+          <p>Moderate future context and adaptive injection provide the best average result.</p>
+        </div>
+        <div class="ablation-grid">
+          <div>
+            <h4>Latent-action horizon</h4>
+            <table class="result-table compact">
+              <thead><tr><th>Setting</th><th>Spatial</th><th>Object</th><th>Goal</th><th>Long</th><th>Avg.</th></tr></thead>
+              <tbody>
+                <tr><th>H<sub>l</sub> = 10</th><td>98.8</td><td>99.8</td><td>99.6</td><td>94.2</td><td>98.1</td></tr>
+                <tr class="highlight-row"><th>H<sub>l</sub> = 20</th><td>98.4</td><td>99.8</td><td>99.6</td><td>95.4</td><td><strong>98.3</strong></td></tr>
+                <tr><th>H<sub>l</sub> = 30</th><td>98.0</td><td>99.8</td><td>97.2</td><td>97.2</td><td>98.1</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h4>Conditioning mechanism</h4>
+            <table class="result-table compact">
+              <thead><tr><th>Variant</th><th>Spatial</th><th>Object</th><th>Goal</th><th>Long</th><th>Avg.</th></tr></thead>
+              <tbody>
+                <tr><th>Without latent action</th><td>97.6</td><td>99.8</td><td>99.0</td><td>95.6</td><td>98.0</td></tr>
+                <tr><th>Without context gate</th><td>98.8</td><td>99.8</td><td>98.8</td><td>94.0</td><td>97.9</td></tr>
+                <tr class="highlight-row"><th>Full CAC-VLA</th><td>98.4</td><td>99.8</td><td>99.6</td><td>95.4</td><td><strong>98.3</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
 
