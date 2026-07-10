@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CAC-VLA learns a VLM-native latent-action interface and adaptively conditions a continuous action expert through context gating.">
+  <meta name="description" content="CAC-VLA learns a VLM-native latent-action interface from future action segments and adaptively conditions a continuous action expert through context gating.">
   <meta name="theme-color" content="#f5f2ea">
   <meta property="og:title" content="CAC-VLA: Context-Gated Action Conditioning for Vision-Language-Action Models">
   <meta property="og:description" content="Action-structured guidance inside the VLM, adaptively calibrated for continuous robot control.">
   <meta property="og:image" content="assets/CAC-VLA-overview.png">
   <title>CAC-VLA</title>
-  <link rel="stylesheet" href="styles.css?v=2">
-  <script src="script.js?v=2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=3">
+  <script src="script.js?v=3" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -19,6 +19,7 @@
       <span>CAC-VLA</span>
     </a>
     <nav aria-label="Main navigation">
+      <a href="#abstract">Abstract</a>
       <a href="#method">Method</a>
       <a href="#results">Results</a>
       <a href="#real-world">Real World</a>
@@ -35,13 +36,14 @@
           A VLM-native latent-action interface that gives continuous action experts
           structured guidance while learning when and how strongly to use it.
         </p>
-        <p class="authors">Anonymous Author(s)</p>
-        <p class="venue">Submitted to CoRL 2026</p>
+        <p class="authors">Yifu Xiong, Wenhao Yu, Jiaxuan Lin, Bojun Zou, Jiahao Li, Lu Zhang, Yanyong Zhang, Jianmin Ji</p>
+        <p class="venue">arXiv:2607.04816 [cs.RO]</p>
 
         <div class="button-row" aria-label="Project links">
           <a class="button primary" href="#method">Explore the method</a>
-          <span class="button disabled" title="Add the public paper URL after release">Paper coming soon</span>
-          <span class="button disabled" title="Add the public repository URL after release">Code coming soon</span>
+          <a class="button" href="https://arxiv.org/pdf/2607.04816">Paper PDF</a>
+          <a class="button" href="https://arxiv.org/abs/2607.04816">arXiv</a>
+          <span class="button disabled" title="Add the public repository URL after release">Code pending release</span>
         </div>
       </div>
 
@@ -64,9 +66,44 @@
       </div>
     </section>
 
+    <section id="abstract" class="abstract-section section-shell">
+      <div class="abstract-copy reveal">
+        <p class="section-index">01 / Abstract</p>
+        <h2>A lightweight latent-action interface inside the VLM.</h2>
+        <p>
+          CAC-VLA trains dedicated VLM query tokens to predict coarse-to-fine latent
+          actions encoded from future action segments. These latent actions are not
+          executed as trajectories; instead, they provide action-structured guidance
+          to the original continuous action expert.
+        </p>
+        <p>
+          A context gate calibrates how much retrieved latent-action information enters
+          each expert layer, allowing the policy to use action guidance adaptively
+          across task phases and generation states.
+        </p>
+      </div>
+      <div class="contribution-panel reveal" aria-label="Contributions">
+        <div>
+          <span>Contribution 1</span>
+          <strong>Latent-action conditioning</strong>
+          <p>An intermediate interface between VLM representations and continuous robot control.</p>
+        </div>
+        <div>
+          <span>Contribution 2</span>
+          <strong>Context-gated expert guidance</strong>
+          <p>Cross-attention retrieves action information while a gate controls residual injection.</p>
+        </div>
+        <div>
+          <span>Contribution 3</span>
+          <strong>Benchmark validation</strong>
+          <p>LIBERO, LIBERO-Plus, ablations, and initial real-world tabletop experiments.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="thesis-band">
       <div class="section-shell thesis-grid">
-        <p class="section-index">01 / Motivation</p>
+        <p class="section-index">02 / Motivation</p>
         <div>
           <h2>The semantic-to-control gap is an interface problem.</h2>
           <p>
@@ -80,7 +117,7 @@
 
     <section id="method" class="section-shell content-section">
       <div class="section-heading reveal">
-        <p class="section-index">02 / Method</p>
+        <p class="section-index">03 / Method</p>
         <h2>Latent actions are guidance, not commands.</h2>
         <p>
           CAC-VLA predicts compact, coarse-to-fine representations of future action
@@ -141,6 +178,24 @@
         </article>
       </div>
 
+      <div class="implementation-grid reveal" aria-label="Implementation details">
+        <div>
+          <span>Training target</span>
+          <strong>Frozen OAT tokenizer</strong>
+          <p>Encodes future action segments into raw latent-action targets for alignment and conditioning.</p>
+        </div>
+        <div>
+          <span>Deployment path</span>
+          <strong>VLM-predicted latents only</strong>
+          <p>The OAT tokenizer is removed at inference; the expert uses latent actions predicted by VLM query tokens.</p>
+        </div>
+        <div>
+          <span>Main settings</span>
+          <strong>N<sub>q</sub> = 8, D<sub>z</sub> = 4</strong>
+          <p>Expert horizon H<sub>e</sub> = 10; latent horizon H<sub>l</sub> = 20 for LIBERO and 10 for LIBERO-Plus.</p>
+        </div>
+      </div>
+
       <div class="formula-strip reveal" aria-label="Core context-gated residual update">
         <div>
           <span>Core update</span>
@@ -153,7 +208,7 @@
     <section class="gate-section">
       <div class="section-shell gate-grid">
         <div class="section-heading reveal">
-          <p class="section-index">03 / Adaptive Conditioning</p>
+          <p class="section-index">04 / Adaptive Conditioning</p>
           <h2>Why a gate?</h2>
           <p>
             Predicted latent actions can be incomplete, noisy, or mismatched with the
@@ -174,7 +229,7 @@
 
     <section id="results" class="section-shell content-section results-section">
       <div class="section-heading reveal">
-        <p class="section-index">04 / Simulation</p>
+        <p class="section-index">05 / Simulation</p>
         <h2>Strong performance across standard and shifted environments.</h2>
         <p>
           CAC-VLA is evaluated on LIBERO and LIBERO-Plus, including distribution
@@ -415,7 +470,7 @@
     <section id="real-world" class="real-section">
       <div class="section-shell">
         <div class="section-heading light reveal">
-          <p class="section-index">05 / Real World</p>
+          <p class="section-index">06 / Real World</p>
           <h2>Initial validation on tabletop pick-and-place.</h2>
           <p>
             CAC-VLA and the &pi;0.5 baseline are fine-tuned on the same 50 demonstrations
@@ -451,7 +506,7 @@
     </section>
 
     <section class="section-shell content-section takeaway-section">
-      <p class="section-index reveal">06 / Takeaway</p>
+      <p class="section-index reveal">07 / Takeaway</p>
       <blockquote class="reveal">
         CAC-VLA makes the VLM-to-expert interface
         <span>action-structured</span> and <span>adaptive</span>.
@@ -466,18 +521,23 @@
     <section id="citation" class="citation-section">
       <div class="section-shell citation-grid">
         <div>
-          <p class="section-index">07 / Citation</p>
+          <p class="section-index">08 / Citation</p>
           <h2>BibTeX</h2>
-          <p>Update the author list and publication fields after the paper becomes public.</p>
+          <p>Use the arXiv identifier for the current public version.</p>
         </div>
         <div class="code-wrap">
           <button id="copy-citation" type="button">Copy</button>
-          <pre><code id="bibtex">@inproceedings{anonymous2026cacvla,
+          <pre><code id="bibtex">@misc{xiong2026cacvla,
   title     = {CAC-VLA: Context-Gated Action Conditioning for
                Vision-Language-Action Models},
-  author    = {Anonymous Author(s)},
-  booktitle = {Conference on Robot Learning},
-  year      = {2026}
+  author    = {Xiong, Yifu and Yu, Wenhao and Lin, Jiaxuan and
+               Zou, Bojun and Li, Jiahao and Zhang, Lu and
+               Zhang, Yanyong and Ji, Jianmin},
+  year      = {2026},
+  eprint    = {2607.04816},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url       = {https://arxiv.org/abs/2607.04816}
 }</code></pre>
         </div>
       </div>
@@ -487,7 +547,7 @@
   <footer>
     <div class="section-shell">
       <span>CAC-VLA</span>
-      <span>Project page for research preview</span>
+      <span>Project page for arXiv:2607.04816</span>
     </div>
   </footer>
 </body>

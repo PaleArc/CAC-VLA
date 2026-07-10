@@ -264,6 +264,82 @@ h1 span {
   color: rgba(255, 255, 255, 0.65);
 }
 
+.abstract-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 56px;
+  align-items: start;
+  padding-block: 110px;
+}
+
+.abstract-section > * {
+  min-width: 0;
+}
+
+.abstract-copy h2 {
+  max-width: 760px;
+  margin-bottom: 26px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 4.8vw, 64px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.abstract-copy p:not(.section-index) {
+  max-width: 760px;
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.abstract-copy p:last-child {
+  margin-bottom: 0;
+}
+
+.contribution-panel,
+.implementation-grid {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--line);
+}
+
+.contribution-panel > div,
+.implementation-grid > div {
+  padding: 26px;
+  background: var(--white);
+}
+
+.contribution-panel span,
+.implementation-grid span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.contribution-panel strong,
+.implementation-grid strong {
+  display: block;
+  margin-bottom: 8px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.contribution-panel p,
+.implementation-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .signal {
   position: absolute;
   z-index: 0;
@@ -431,6 +507,11 @@ figcaption {
 .method-card p {
   margin-bottom: 0;
   color: #59635e;
+}
+
+.implementation-grid {
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 18px;
 }
 
 .formula-strip {
@@ -1046,6 +1127,7 @@ footer .section-shell {
   }
 
   .hero,
+  .abstract-section,
   .gate-grid,
   .real-grid,
   .citation-grid {
@@ -1067,6 +1149,7 @@ footer .section-shell {
   }
 
   .method-grid,
+  .implementation-grid,
   .results-grid,
   .takeaway-grid,
   .benchmark-grid,

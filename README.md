@@ -4,6 +4,13 @@ This directory contains a static project website for:
 
 **CAC-VLA: Context-Gated Action Conditioning for Vision-Language-Action Models**
 
+The current page content is synchronized with arXiv:2607.04816:
+
+- public arXiv metadata and author list
+- PDF link served from `https://arxiv.org/pdf/2607.04816`
+- abstract, contributions, method summary, implementation details, simulation
+  results, ablations, real-world validation, limitations, and BibTeX
+
 ## Publish with GitHub Pages
 
 1. Push this project to a GitHub repository.
@@ -12,5 +19,4 @@ This directory contains a static project website for:
 4. Select the `main` branch and the `/docs` folder.
 5. Save and wait for the deployment to finish.
 
-Before public release, update the author list, paper URL, code URL, and BibTeX
-entry in `index.html`.
+Before public code release, update the code URL in `index.html`.
