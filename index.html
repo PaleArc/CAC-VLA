@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CAC-VLA learns a VLM-native latent-action interface from future action segments and adaptively conditions a continuous action expert through context gating.">
+  <meta name="description" content="CAC-VLA learns a VLM-native latent-action interface from future action segments and adaptively conditions a continuous action expert through context gating. Evaluated on LIBERO, LIBERO-Plus, CALVIN D-D, and real-world manipulation.">
   <meta name="theme-color" content="#f5f2ea">
   <meta property="og:title" content="CAC-VLA: Context-Gated Action Conditioning for Vision-Language-Action Models">
   <meta property="og:description" content="Action-structured guidance inside the VLM, adaptively calibrated for continuous robot control.">
-  <meta property="og:image" content="assets/CAC-VLA-overview.png">
+  <meta property="og:image" content="assets/CAC-VLA-overview-new.png">
   <title>CAC-VLA</title>
-  <link rel="stylesheet" href="styles.css?v=3">
-  <script src="script.js?v=3" defer></script>
+  <link rel="stylesheet" href="styles.css?v=4">
+  <script src="script.js?v=4" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -41,7 +41,7 @@
 
         <div class="button-row" aria-label="Project links">
           <a class="button primary" href="#method">Explore the method</a>
-          <a class="button" href="https://arxiv.org/pdf/2607.04816">Paper PDF</a>
+          <a class="button" href="assets/cac_vla_paper.pdf">Paper PDF</a>
           <a class="button" href="https://arxiv.org/abs/2607.04816">arXiv</a>
           <span class="button disabled" title="Add the public repository URL after release">Code pending release</span>
         </div>
@@ -49,16 +49,16 @@
 
       <div class="hero-panel reveal" aria-label="Headline results">
         <div class="metric metric-main">
-          <strong>98.3<span>%</span></strong>
+          <strong>98.9<span>%</span></strong>
           <p>LIBERO average success</p>
         </div>
         <div class="metric">
-          <strong>89.5<span>%</span></strong>
+          <strong>90.4<span>%</span></strong>
           <p>LIBERO-Plus SFT</p>
         </div>
         <div class="metric">
-          <strong>+48<span> pp</span></strong>
-          <p>Real-world Full SR</p>
+          <strong>67.1<span>%</span></strong>
+          <p>CALVIN 5-task completion</p>
         </div>
         <div class="signal" aria-hidden="true">
           <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
@@ -127,7 +127,7 @@
       </div>
 
       <figure class="paper-figure reveal">
-        <img src="assets/CAC-VLA-overview.png" alt="CAC-VLA pipeline with OAT latent-action alignment and context-gated action expert conditioning">
+        <img src="assets/CAC-VLA-overview-new.png" alt="CAC-VLA pipeline with OAT latent-action alignment and context-gated action expert conditioning">
         <figcaption>
           CAC-VLA predicts OAT-aligned latent actions inside the VLM and injects them
           into the continuous action expert through context-gated conditioning.
@@ -136,7 +136,7 @@
 
       <div class="mechanism-grid">
         <figure class="mechanism-figure reveal">
-          <img src="assets/attention_mask.png" alt="Expert-aware attention mask for image, prompt, state, query, and expert tokens">
+          <img src="assets/attention_mask-new.png" alt="Expert-aware attention mask for image, prompt, state, query, and expert tokens">
           <figcaption>
             <strong>Expert-aware mask.</strong> Expert tokens cannot directly attend to
             latent query tokens, preventing an unstructured shortcut.
@@ -191,8 +191,8 @@
         </div>
         <div>
           <span>Main settings</span>
-          <strong>N<sub>q</sub> = 8, D<sub>z</sub> = 4</strong>
-          <p>Expert horizon H<sub>e</sub> = 10; latent horizon H<sub>l</sub> = 20 for LIBERO and 10 for LIBERO-Plus.</p>
+          <strong>N<sub>q</sub> = 8, H<sub>l</sub> = H<sub>e</sub> = 10</strong>
+          <p>Latent-action loss weight &lambda;<sub>align</sub> = 0.1; the OAT tokenizer is used for training targets and removed at inference.</p>
         </div>
       </div>
 
@@ -221,8 +221,8 @@
           </div>
         </div>
         <figure class="gate-figure reveal">
-          <img src="assets/gate-progress.png" alt="Average context-gate value across ten flow steps for four LIBERO suites">
-          <figcaption>Gate values averaged over layers, episodes, and hidden channels.</figcaption>
+          <img src="assets/conditioning-heatmap.png" alt="Effective latent-conditioning strength across flow steps and manipulation phases">
+          <figcaption>Effective latent-conditioning strength across flow steps and manipulation phases.</figcaption>
         </figure>
       </div>
     </section>
@@ -230,43 +230,53 @@
     <section id="results" class="section-shell content-section results-section">
       <div class="section-heading reveal">
         <p class="section-index">05 / Simulation</p>
-        <h2>Strong performance across standard and shifted environments.</h2>
+        <h2>Strong performance across standard, shifted, and long-horizon tasks.</h2>
         <p>
-          CAC-VLA is evaluated on LIBERO and LIBERO-Plus, including distribution
-          shifts in viewpoint, embodiment, language, lighting, background, noise, and layout.
+        CAC-VLA is evaluated on LIBERO, LIBERO-Plus, and CALVIN D-D, covering
+        standard manipulation, seven distribution shifts, and long-horizon task sequences.
         </p>
       </div>
 
       <div class="results-grid">
         <article class="result-card dark reveal">
           <p>LIBERO</p>
-          <strong>98.3%</strong>
-          <span>Average success rate, ranked #2</span>
+          <strong>98.9%</strong>
+          <span>Average success rate, ranked #1</span>
           <dl>
-            <div><dt>Spatial</dt><dd>98.4%</dd></div>
+            <div><dt>Spatial</dt><dd>99.6%</dd></div>
             <div><dt>Object</dt><dd>99.8%</dd></div>
-            <div><dt>Goal</dt><dd>99.6%</dd></div>
-            <div><dt>Long</dt><dd>95.4%</dd></div>
+            <div><dt>Goal</dt><dd>99.0%</dd></div>
+            <div><dt>Long</dt><dd>97.2%</dd></div>
           </dl>
         </article>
         <article class="result-card reveal">
           <p>LIBERO-Plus</p>
-          <strong>89.5%</strong>
+          <strong>90.4%</strong>
           <span>Supervised fine-tuning</span>
           <dl>
-            <div><dt>Zero-shot</dt><dd>83.8%</dd></div>
-            <div><dt>Lighting</dt><dd>97.5%</dd></div>
-            <div><dt>Background</dt><dd>97.1%</dd></div>
+            <div><dt>Zero-shot</dt><dd>84.2%</dd></div>
+            <div><dt>Lighting</dt><dd>98.9%</dd></div>
+            <div><dt>Background</dt><dd>98.6%</dd></div>
           </dl>
         </article>
         <article class="result-card reveal">
           <p>Design ablation</p>
-          <strong>98.3%</strong>
-          <span>Full CAC-VLA</span>
+          <strong>90.43%</strong>
+          <span>Full CAC-VLA on LIBERO-Plus</span>
           <dl>
-            <div><dt>No latent condition</dt><dd>98.0%</dd></div>
-            <div><dt>No context gate</dt><dd>97.9%</dd></div>
-            <div><dt>Best horizon</dt><dd>H<sub>l</sub> = 20</dd></div>
+            <div><dt>w/o latent</dt><dd>87.95%</dd></div>
+            <div><dt>w/o context gate</dt><dd>89.36%</dd></div>
+            <div><dt>Best horizon</dt><dd>H<sub>l</sub> = 10</dd></div>
+          </dl>
+        </article>
+        <article class="result-card reveal">
+          <p>CALVIN D-D</p>
+          <strong>67.1%</strong>
+          <span>5-task completion rate</span>
+          <dl>
+            <div><dt>1 task</dt><dd>91.5%</dd></div>
+            <div><dt>3 tasks</dt><dd>78.3%</dd></div>
+            <div><dt>Avg. length</dt><dd>3.944</dd></div>
           </dl>
         </article>
       </div>
@@ -288,8 +298,8 @@
             </div>
             <div class="bar-row highlight">
               <span>CAC-VLA</span>
-              <div class="bar-track"><i style="--score: 98.3%"></i></div>
-              <strong>98.3</strong>
+              <div class="bar-track"><i style="--score: 98.9%"></i></div>
+              <strong>98.9</strong>
             </div>
             <div class="bar-row">
               <span>VLA-Adapter</span>
@@ -302,7 +312,7 @@
               <strong>96.9</strong>
             </div>
           </div>
-          <p class="panel-note">CAC-VLA ranks second overall and achieves the best Object and Goal suite scores.</p>
+          <p class="panel-note">CAC-VLA ranks first overall and achieves the best Spatial and Long suite scores.</p>
         </article>
 
         <article class="benchmark-panel reveal">
@@ -316,8 +326,8 @@
           <div class="bar-list">
             <div class="bar-row highlight">
               <span>CAC-VLA</span>
-              <div class="bar-track"><i style="--score: 89.5%"></i></div>
-              <strong>89.5</strong>
+              <div class="bar-track"><i style="--score: 90.4%"></i></div>
+              <strong>90.4</strong>
             </div>
             <div class="bar-row">
               <span>ACoT-VLA</span>
@@ -326,8 +336,8 @@
             </div>
             <div class="bar-row">
               <span>&pi;0.5</span>
-              <div class="bar-track"><i style="--score: 85.7%"></i></div>
-              <strong>85.7</strong>
+              <div class="bar-track"><i style="--score: 87.5%"></i></div>
+              <strong>87.5</strong>
             </div>
           </div>
           <p class="panel-note">The strongest average result under supervised fine-tuning across seven shifts.</p>
@@ -344,13 +354,13 @@
           <div class="bar-list">
             <div class="bar-row highlight">
               <span>CAC-VLA</span>
-              <div class="bar-track"><i style="--score: 83.8%"></i></div>
-              <strong>83.8</strong>
+              <div class="bar-track"><i style="--score: 84.2%"></i></div>
+              <strong>84.2</strong>
             </div>
             <div class="bar-row">
               <span>&pi;0.5</span>
-              <div class="bar-track"><i style="--score: 81.5%"></i></div>
-              <strong>81.5</strong>
+              <div class="bar-track"><i style="--score: 82.2%"></i></div>
+              <strong>82.2</strong>
             </div>
             <div class="bar-row">
               <span>OpenVLA-OFT</span>
@@ -395,17 +405,17 @@
                   <th>ACoT-VLA</th>
                   <td>98.6</td>
                   <td>99.0</td>
-                  <td>99.4</td>
-                  <td><strong>97.0</strong></td>
-                  <td><strong>98.5</strong></td>
+                  <td><strong>99.4</strong></td>
+                  <td>97.0</td>
+                  <td>98.5</td>
                 </tr>
                 <tr class="highlight-row">
                   <th>CAC-VLA</th>
-                  <td>98.4</td>
-                  <td><strong>99.8</strong></td>
                   <td><strong>99.6</strong></td>
-                  <td>95.4</td>
-                  <td>98.3</td>
+                  <td><strong>99.8</strong></td>
+                  <td>99.0</td>
+                  <td><strong>97.2</strong></td>
+                  <td><strong>98.9</strong></td>
                 </tr>
               </tbody>
             </table>
@@ -421,13 +431,13 @@
             <small>Supervised fine-tuning</small>
           </div>
           <div class="shift-grid">
-            <div><span>Camera</span><strong>91.2</strong><i style="--score: 91.2%"></i></div>
-            <div><span>Robot</span><strong>78.4</strong><i style="--score: 78.4%"></i></div>
-            <div><span>Language</span><strong>83.3</strong><i style="--score: 83.3%"></i></div>
-            <div><span>Lighting</span><strong>97.5</strong><i style="--score: 97.5%"></i></div>
-            <div><span>Background</span><strong>97.1</strong><i style="--score: 97.1%"></i></div>
-            <div><span>Noise</span><strong>95.4</strong><i style="--score: 95.4%"></i></div>
-            <div><span>Layout</span><strong>87.8</strong><i style="--score: 87.8%"></i></div>
+            <div><span>Camera</span><strong>94.8</strong><i style="--score: 94.8%"></i></div>
+            <div><span>Robot</span><strong>72.5</strong><i style="--score: 72.5%"></i></div>
+            <div><span>Language</span><strong>86.6</strong><i style="--score: 86.6%"></i></div>
+            <div><span>Lighting</span><strong>98.9</strong><i style="--score: 98.9%"></i></div>
+            <div><span>Background</span><strong>98.6</strong><i style="--score: 98.6%"></i></div>
+            <div><span>Noise</span><strong>98.3</strong><i style="--score: 98.3%"></i></div>
+            <div><span>Layout</span><strong>87.6</strong><i style="--score: 87.6%"></i></div>
           </div>
         </article>
       </div>
@@ -446,9 +456,9 @@
             <table class="result-table compact">
               <thead><tr><th>Setting</th><th>Spatial</th><th>Object</th><th>Goal</th><th>Long</th><th>Avg.</th></tr></thead>
               <tbody>
-                <tr><th>H<sub>l</sub> = 10</th><td>98.8</td><td>99.8</td><td>99.6</td><td>94.2</td><td>98.1</td></tr>
-                <tr class="highlight-row"><th>H<sub>l</sub> = 20</th><td>98.4</td><td>99.8</td><td>99.6</td><td>95.4</td><td><strong>98.3</strong></td></tr>
-                <tr><th>H<sub>l</sub> = 30</th><td>98.0</td><td>99.8</td><td>97.2</td><td>97.2</td><td>98.1</td></tr>
+                <tr class="highlight-row"><th>H<sub>l</sub> = 10</th><td>94.81</td><td>72.45</td><td>86.60</td><td>98.86</td><td><strong>90.43</strong></td></tr>
+                <tr><th>H<sub>l</sub> = 20</th><td>94.56</td><td>70.52</td><td>81.91</td><td>97.81</td><td>88.38</td></tr>
+                <tr><th>H<sub>l</sub> = 30</th><td>94.37</td><td>68.06</td><td>79.83</td><td>97.20</td><td>87.66</td></tr>
               </tbody>
             </table>
           </div>
@@ -457,9 +467,9 @@
             <table class="result-table compact">
               <thead><tr><th>Variant</th><th>Spatial</th><th>Object</th><th>Goal</th><th>Long</th><th>Avg.</th></tr></thead>
               <tbody>
-                <tr><th>Without latent action</th><td>97.6</td><td>99.8</td><td>99.0</td><td>95.6</td><td>98.0</td></tr>
-                <tr><th>Without context gate</th><td>98.8</td><td>99.8</td><td>98.8</td><td>94.0</td><td>97.9</td></tr>
-                <tr class="highlight-row"><th>Full CAC-VLA</th><td>98.4</td><td>99.8</td><td>99.6</td><td>95.4</td><td><strong>98.3</strong></td></tr>
+                <tr class="highlight-row"><th>Full CAC-VLA</th><td>94.81</td><td>72.45</td><td>86.60</td><td>98.86</td><td><strong>90.43</strong></td></tr>
+                <tr><th>Without context gate</th><td>94.87</td><td>71.55</td><td>81.91</td><td>99.21</td><td>89.36</td></tr>
+                <tr><th>Without latent action</th><td>94.25</td><td>70.90</td><td>82.76</td><td>95.53</td><td>87.95</td></tr>
               </tbody>
             </table>
           </div>
@@ -471,34 +481,47 @@
       <div class="section-shell">
         <div class="section-heading light reveal">
           <p class="section-index">06 / Real World</p>
-          <h2>Initial validation on tabletop pick-and-place.</h2>
+          <h2>Initial validation on tabletop manipulation.</h2>
           <p>
-            CAC-VLA and the &pi;0.5 baseline are fine-tuned on the same 50 demonstrations
-            and evaluated over 25 independent trials using a UR7e and two RealSense D435i cameras.
+            CAC-VLA and the &pi;0.5 baseline are fine-tuned separately on the same 50 demonstrations
+            for each task and evaluated over 25 independent trials using a UR7e and two RealSense D435i cameras.
           </p>
         </div>
 
         <div class="real-grid">
           <figure class="real-photo reveal">
-            <img src="assets/cac-vla-real.png" alt="Annotated UR7e tabletop setup with RealSense D435i cameras and the target object">
-            <figcaption>Annotated real-world setup with the wrist and third-person RealSense D435i cameras.</figcaption>
+            <img src="assets/real-pick-place.png" alt="UR7e pick-and-place tabletop setup with RealSense D435i cameras">
+            <figcaption>Pick-and-place setup with wrist-mounted and third-person cameras.</figcaption>
+          </figure>
+          <figure class="real-photo reveal">
+            <img src="assets/real-block-stacking.png" alt="UR7e block-stacking tabletop setup">
+            <figcaption>Block-stacking setup used for the second real-world task.</figcaption>
+          </figure>
+          <figure class="real-photo reveal">
+            <img src="assets/real-results.png" alt="Quantitative real-world evaluation results">
+            <figcaption>Task Score, Full Success Rate, and Stacking Success Rate.</figcaption>
           </figure>
           <div class="real-metrics reveal">
             <div>
-              <span>Task Score</span>
-              <strong>48% <i>to</i> 72%</strong>
-              <em>+24 percentage points</em>
+              <span>Pick-and-place Task Score</span>
+              <strong>72%</strong>
+              <em>baseline: 48%</em>
             </div>
             <div>
-              <span>Full Success Rate</span>
-              <strong>16% <i>to</i> 64%</strong>
-              <em>+48 percentage points</em>
+              <span>Pick-and-place Full SR</span>
+              <strong>64%</strong>
+              <em>16/25 trials; baseline: 16%</em>
+            </div>
+            <div>
+              <span>Block-stacking SR</span>
+              <strong>52%</strong>
+              <em>13/25 trials; baseline: 36%</em>
             </div>
           </div>
         </div>
 
         <p class="limitation reveal">
-          <strong>Scope.</strong> The real-world study is intentionally initial: one task,
+          <strong>Scope.</strong> The real-world study is intentionally initial: two tasks,
           one robot embodiment, and a limited demonstration set. Broader tasks and
           task-adaptive latent horizons remain future work.
         </p>
